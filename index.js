@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const express = require('express');
 const Restaurant = require('./models/restaurants.model.js');
 const User = require('./models/user.model.js');
+const Product = require('./models/product.models.js');
 const { fetchAndSaveRestaurants } = require('./service/api_service'); // Ensure this path is correct
 
 const app = express()
@@ -50,7 +51,30 @@ app.get('/api/restaurants', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+//add product to DB 
+app.post('/api/restaurants/:id/products', async (req, res) => {
+    try {
+        const { name } = req.body;
+        const restaurantId = req.params.id;
 
+        const product = new Product({ name, restaurantId });
+        await product.save();
+
+        res.status(201).json({ message: 'Product added successfully', product });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// get products by restaurant ID
+app.get('/api/restaurants/:id/products', async (req, res) => {
+    try {
+        const products = await Product.find({ restaurantId: req.params.id });
+        res.json(products);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
 mongoose.connect('mongodb+srv://saraelbagory:20210156Sa@cluster0.bfg0w9g.mongodb.net/Em-APi?retryWrites=true&w=majority&appName=Cluster0').then(() => {
     console.log('Connected to MongoDB')
