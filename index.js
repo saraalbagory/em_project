@@ -3,11 +3,13 @@ const express = require('express');
 const Restaurant = require('./models/restaurants.model.js');
 const User = require('./models/user.model.js');
 const { fetchAndSaveRestaurants } = require('./service/api_service'); // Ensure this path is correct
+const cors = require('cors');
+
 
 const app = express()
 
 app.use(express.json())
-
+app.use(cors());
 app.get('/', (req, res) => {
     //this is the response
     res.send('Hello World!')
