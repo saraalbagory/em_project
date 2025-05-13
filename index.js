@@ -78,6 +78,30 @@ app.get('/api/restaurants/:id/products', async (req, res) => {
     }
 });
 
+app.post('/api/signin', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Email and password are required' });
+        }
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).json({ message: 'Invalid email' });
+        }
+
+        if (user.password !== password) {
+            return res.status(401).json({ message: 'Invalid email or password' });
+        }
+
+        res.status(200).json({ message: 'Sign in successful', user });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
 mongoose.connect('mongodb+srv://saraelbagory:20210156Sa@cluster0.bfg0w9g.mongodb.net/Em-APi?retryWrites=true&w=majority&appName=Cluster0').then(() => {
     console.log('Connected to MongoDB')
     app.listen(3000, () => {
