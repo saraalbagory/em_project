@@ -27,12 +27,13 @@ app.get('/import', async (req, res) => {
 app.post('/api/users', async (req, res) => {
     try{
         if (!req.body) {
+            print("req,body",req.body)
             return res.status(400).json({ error: 'Request body is missing' });
         }
         const { name, email,gender,level,password } = req.body;
         let existingUser= await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ message: 'User already exists' });
+            return res.status(409).json({ message: 'User already exists' });
         }
         const user = new User({ name,email,gender,level,password });
         await user.save();
